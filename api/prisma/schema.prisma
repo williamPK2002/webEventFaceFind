@@ -1,0 +1,196 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+  PHOTOGRAPHER
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ProcessingStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum DeliveryStatus {
+  PENDING
+  SENT
+  FAILED
+  OPENED
+}
+
+enum RemovalRequestType {
+  DELETE
+  TAKEDOWN
+  PRIVACY
+}
+
+enum RemovalRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String?
+  role         Role     @default(STUDENT)
+  pdpaConsent  Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  deliveries      Delivery[]
+  abuseReports    AbuseReport[]
+  savedPhotos     SavedPhoto[]
+  removalRequests RemovalRequest[]
+
+  @@map("users")
+}
+
+model Event {
+  id          String      @id @default(uuid())
+  name        String
+  slug        String      @unique
+  date        DateTime
+  location    String?
+  description String?
+  status      EventStatus @default(DRAFT)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  photos      Photo[]
+  deliveries  Delivery[]
+
+  @@map("events")
+}
+
+model Photo {
+  id               String           @id @default(uuid())
+  eventId          String
+  storageUrl       String
+  thumbnailUrl     String?
+  processingStatus ProcessingStatus @default(PENDING)
+  mimeType         String?
+  width            Int?
+  height           Int?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  event        Event         @relation(fields: [eventId], references: [id])
+  faces        Face[]
+  abuseReports AbuseReport[]
+  savedBy      SavedPhoto[]
+  removalRequests RemovalRequest[]
+
+  @@index([eventId])
+  @@index([createdAt])
+  @@index([processingStatus])
+  @@map("photos")
+}
+
+model Face {
+  id         String @id @default(uuid())
+  photoId    String
+  weaviateId String? // ID in Weaviate vector DB
+  confidence Float?  // Detection confidence
+  
+  // Bounding box (optional)
+  x          Float?
+  y          Float?
+  w          Float?
+  h          Float?
+
+  photo Photo @relation(fields: [photoId], references: [id])
+
+  @@index([photoId])
+  @@index([weaviateId])
+  @@map("faces")
+}
+
+model Delivery {
+  id        String         @id @default(uuid())
+  userId    String
+  eventId   String
+  status    DeliveryStatus @default(PENDING)
+  sentAt    DateTime?
+  createdAt DateTime       @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+
+  @@index([userId])
+  @@index([eventId])
+  @@index([status])
+  @@map("deliveries")
+}
+
+model AbuseReport {
+  id          String   @id @default(uuid())
+  photoId     String
+  reporterId  String
+  reason      String
+  description String?
+  resolved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  photo    Photo @relation(fields: [photoId], references: [id])
+  reporter User  @relation(fields: [reporterId], references: [id])
+
+  @@index([photoId])
+  @@index([reporterId])
+  @@index([resolved])
+  @@map("abuse_reports")
+}
+
+model SavedPhoto {
+  id        String   @id @default(uuid())
+  userId    String
+  photoId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  photo Photo @relation(fields: [photoId], references: [id])
+
+  @@unique([userId, photoId])
+  @@index([userId])
+  @@index([photoId])
+  @@map("saved_photos")
+}
+
+model RemovalRequest {
+  id          String                @id @default(uuid())
+  photoId     String
+  userId      String
+  requestType RemovalRequestType
+  reason      String?
+  status      RemovalRequestStatus  @default(PENDING)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  photo Photo @relation(fields: [photoId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@index([photoId])
+  @@index([userId])
+  @@index([status])
+  @@map("removal_requests")
+}

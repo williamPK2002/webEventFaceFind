@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+python-multipart
+numpy
+opencv-python-headless
+insightface
+onnxruntime
+Pillow
+prometheus-fastapi-instrumentator

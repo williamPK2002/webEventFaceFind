@@ -1,0 +1,323 @@
+{
+    "dashboard": {
+        "id": null,
+        "uid": "5dc3d6f3-ca96-41cc-b4dc-ddd9f9af0176",
+        "title": "PhotoFinder System Overview",
+        "tags": [
+            "modern",
+            "simplified",
+            "accuracy"
+        ],
+        "timezone": "browser",
+        "schemaVersion": 30,
+        "version": 1,
+        "refresh": "5s",
+        "panels": [
+            {
+                "id": 2,
+                "gridPos": {
+                    "h": 6,
+                    "w": 6,
+                    "x": 0,
+                    "y": 0
+                },
+                "type": "stat",
+                "title": "Total Photo Uploads",
+                "targets": [
+                    {
+                        "expr": "sum(photo_uploads_total)"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "fixed",
+                            "fixedColor": "blue"
+                        },
+                        "sparkline": {
+                            "show": true,
+                            "full": true
+                        }
+                    }
+                },
+                "options": {
+                    "graphMode": "area",
+                    "colorMode": "background"
+                }
+            },
+            {
+                "id": 3,
+                "gridPos": {
+                    "h": 6,
+                    "w": 6,
+                    "x": 6,
+                    "y": 0
+                },
+                "type": "stat",
+                "title": "Total Face Searches",
+                "targets": [
+                    {
+                        "expr": "sum(face_search_total)"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "fixed",
+                            "fixedColor": "purple"
+                        },
+                        "sparkline": {
+                            "show": true,
+                            "full": true
+                        }
+                    }
+                },
+                "options": {
+                    "graphMode": "area",
+                    "colorMode": "background"
+                }
+            },
+            {
+                "id": 9,
+                "gridPos": {
+                    "h": 6,
+                    "w": 6,
+                    "x": 12,
+                    "y": 0
+                },
+                "type": "gauge",
+                "title": "CPU Usage",
+                "targets": [
+                    {
+                        "expr": "sum(rate(process_cpu_seconds_total[1m])) * 100"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "min": 0,
+                        "max": 100,
+                        "unit": "percent",
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "#EAB839",
+                                    "value": 60
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 80
+                                }
+                            ]
+                        }
+                    }
+                },
+                "options": {
+                    "showThresholdLabels": false,
+                    "showThresholdMarkers": true,
+                    "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "values": false
+                    }
+                }
+            },
+            {
+                "id": 10,
+                "gridPos": {
+                    "h": 6,
+                    "w": 6,
+                    "x": 18,
+                    "y": 0
+                },
+                "type": "gauge",
+                "title": "Memory Usage (MB)",
+                "targets": [
+                    {
+                        "expr": "sum(process_resident_memory_bytes) / 1024 / 1024"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "min": 0,
+                        "unit": "megabytes",
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "blue",
+                                    "value": null
+                                },
+                                {
+                                    "color": "orange",
+                                    "value": 1024
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 2048
+                                }
+                            ]
+                        }
+                    }
+                },
+                "options": {
+                    "showThresholdLabels": false,
+                    "showThresholdMarkers": true,
+                    "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "values": false
+                    }
+                }
+            },
+            {
+                "id": 1,
+                "gridPos": {
+                    "h": 8,
+                    "w": 8,
+                    "x": 0,
+                    "y": 6
+                },
+                "type": "barchart",
+                "title": "Traffic (Requests per Minute)",
+                "targets": [
+                    {
+                        "expr": "sum(rate(http_requests_total[1m])) * 60",
+                        "legendFormat": "Requests"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "palette-classic"
+                        },
+                        "custom": {
+                            "fillOpacity": 80
+                        }
+                    }
+                }
+            },
+            {
+                "id": 4,
+                "gridPos": {
+                    "h": 8,
+                    "w": 8,
+                    "x": 8,
+                    "y": 6
+                },
+                "type": "gauge",
+                "title": "AI Processing Speed (Avg Seconds)",
+                "targets": [
+                    {
+                        "expr": "rate(ai_processing_duration_seconds_sum[5m]) / rate(ai_processing_duration_seconds_count[5m])",
+                        "legendFormat": "Avg Duration"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "min": 0,
+                        "max": 5,
+                        "unit": "s",
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "#EAB839",
+                                    "value": 1
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 3
+                                }
+                            ]
+                        }
+                    }
+                },
+                "options": {
+                    "showThresholdLabels": true,
+                    "showThresholdMarkers": true,
+                    "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "values": false
+                    }
+                }
+            },
+            {
+                "id": 11,
+                "gridPos": {
+                    "h": 8,
+                    "w": 8,
+                    "x": 16,
+                    "y": 6
+                },
+                "type": "gauge",
+                "title": "AI Accuracy (Avg Confidence)",
+                "targets": [
+                    {
+                        "expr": "sum(rate(ai_confidence_score_sum[5m])) / sum(rate(ai_confidence_score_count[5m])) * 100",
+                        "legendFormat": "Confidence %"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "min": 0,
+                        "max": 100,
+                        "unit": "percent",
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "thresholds": {
+                            "mode": "absolute",
+                            "steps": [
+                                {
+                                    "color": "red",
+                                    "value": null
+                                },
+                                {
+                                    "color": "#EAB839",
+                                    "value": 70
+                                },
+                                {
+                                    "color": "green",
+                                    "value": 90
+                                }
+                            ]
+                        }
+                    }
+                },
+                "options": {
+                    "showThresholdLabels": true,
+                    "showThresholdMarkers": true,
+                    "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ],
+                        "values": false
+                    }
+                }
+            }
+        ]
+    },
+    "overwrite": true
+}

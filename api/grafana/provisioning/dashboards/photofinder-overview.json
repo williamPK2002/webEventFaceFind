@@ -1,0 +1,113 @@
+{
+    "dashboard": {
+        "title": "PhotoFinder System Overview",
+        "panels": [
+            {
+                "id": 1,
+                "title": "HTTP Requests per Second",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "rate(http_requests_total[1m])",
+                        "legendFormat": "{{method}} {{route}}"
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            {
+                "id": 2,
+                "title": "Photo Uploads",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "sum(photo_uploads_total)"
+                    }
+                ],
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 12,
+                    "y": 0
+                }
+            },
+            {
+                "id": 3,
+                "title": "Face Searches",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "sum(face_search_total)"
+                    }
+                ],
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 18,
+                    "y": 0
+                }
+            },
+            {
+                "id": 4,
+                "title": "AI Processing Duration",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "histogram_quantile(0.95, rate(ai_processing_duration_seconds_bucket[5m]))",
+                        "legendFormat": "95th percentile"
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 4
+                }
+            },
+            {
+                "id": 5,
+                "title": "Memory Usage",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "process_resident_memory_bytes",
+                        "legendFormat": "{{job}}"
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 8
+                }
+            },
+            {
+                "id": 6,
+                "title": "CPU Usage",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "rate(process_cpu_seconds_total[1m])",
+                        "legendFormat": "{{job}}"
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 8
+                }
+            }
+        ],
+        "refresh": "5s",
+        "time": {
+            "from": "now-1h",
+            "to": "now"
+        },
+        "timezone": "browser"
+    }
+}
